@@ -127,7 +127,7 @@ Vue.component('product-tabs', {
             >{{ tab }}</span>
         </div>
         
-        <!-- Вкладка Reviews -->
+        
         <div v-show="selectedTab === 'Reviews'">
             <h2>Reviews</h2>
             <p v-if="!reviews.length">There are no reviews yet.</p>
@@ -193,15 +193,15 @@ Vue.component('product', {
         <div class="product-info">
             <h1>{{ title }}</h1>
             
-            <!-- Статус наличия -->
+            
             <p v-if="inStock && inventory > 10">In Stock</p>
             <p v-else-if="inStock && inventory <= 10 && inventory > 0">Almost sold out!</p>
             <p v-else :class="{ 'line-through': !inStock }">Out of Stock</p>
             
-            <!-- Распродажа -->
+            
             <span v-if="inventory <= 5 && inventory > 0" class="sale">On Sale</span>
             
-            <!-- Цветовые квадраты -->
+            
             <div
                 class="color-box"
                 v-for="(variant, index) in variants"
@@ -210,7 +210,7 @@ Vue.component('product', {
                 @mouseover="updateProduct(index)"
             ></div>
             
-            <!-- Кнопки корзины -->
+           
             <div class="cart-buttons">
                 <button
                     v-on:click="addToCart"
@@ -226,7 +226,7 @@ Vue.component('product', {
             </div>
         </div>           
         
-        <!-- Компонент вкладок -->
+      
         <product-tabs 
             :reviews="reviews"
             :premium="premium"
