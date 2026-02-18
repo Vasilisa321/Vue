@@ -127,12 +127,34 @@ Vue.component('product-tabs', {
             >{{ tab }}</span>
         </div>
         
-        
+       
         <div v-show="selectedTab === 'Reviews'">
-            <h2>Reviews</h2>
+            <div class="reviews-header">
+                <h2>Reviews</h2>
+                
+               
+                <div class="sort-buttons" v-if="reviews.length > 0">
+                    <span>Sort by rating: </span>
+                    <button 
+                        @click="sortOrder = 'desc'"
+                        :class="{ activeSort: sortOrder === 'desc' }"
+                    >
+                        Highest first ↓
+                    </button>
+                    <button 
+                        @click="sortOrder = 'asc'"
+                        :class="{ activeSort: sortOrder === 'asc' }"
+                    >
+                        Lowest first ↑
+                    </button>
+                </div>
+            </div>
+            
             <p v-if="!reviews.length">There are no reviews yet.</p>
+            
+         
             <ul>
-                <li v-for="review in reviews" :key="review.name + review.rating">
+                <li v-for="review in sortedReviews" :key="review.name + review.rating + review.review">
                     <p><strong>{{ review.name }}</strong></p>
                     <p>Rating: {{ review.rating }}/5</p>
                     <p>{{ review.review }}</p>
@@ -141,16 +163,19 @@ Vue.component('product-tabs', {
             </ul>
         </div>
         
+        
         <div v-show="selectedTab === 'Make a Review'">
             <product-review></product-review>
         </div>
         
+
         <div v-show="selectedTab === 'Shipping'">
             <h2>Shipping</h2>
             <p>Shipping cost: {{ shippingCost }}</p>
             <p v-if="premium">Free shipping for premium members!</p>
         </div>
      
+        
         <div v-show="selectedTab === 'Details'">
             <h2>Product Details</h2>
             <ul>
@@ -167,12 +192,23 @@ Vue.component('product-tabs', {
     data() {
         return {
             tabs: ['Reviews', 'Make a Review', 'Shipping', 'Details'],
-            selectedTab: 'Reviews'
+            selectedTab: 'Reviews',
+            sortOrder: 'desc'
         }
     },
     computed: {
         shippingCost() {
             return this.premium ? 'Free' : '$2.99';
+        },
+
+        sortedReviews() {
+            return [...this.reviews].sort((a, b) => {
+                if (this.sortOrder === 'desc') {
+                    return b.rating - a.rating;
+                } else {
+                    return a.rating - b.rating;
+                }
+            });
         }
     }
 });
@@ -193,14 +229,11 @@ Vue.component('product', {
         <div class="product-info">
             <h1>{{ title }}</h1>
             
-            
             <p v-if="inStock && inventory > 10">In Stock</p>
             <p v-else-if="inStock && inventory <= 10 && inventory > 0">Almost sold out!</p>
             <p v-else :class="{ 'line-through': !inStock }">Out of Stock</p>
             
-            
             <span v-if="inventory <= 5 && inventory > 0" class="sale">On Sale</span>
-            
             
             <div
                 class="color-box"
@@ -210,7 +243,6 @@ Vue.component('product', {
                 @mouseover="updateProduct(index)"
             ></div>
             
-           
             <div class="cart-buttons">
                 <button
                     v-on:click="addToCart"
@@ -226,7 +258,6 @@ Vue.component('product', {
             </div>
         </div>           
         
-      
         <product-tabs 
             :reviews="reviews"
             :premium="premium"
@@ -289,6 +320,7 @@ Vue.component('product', {
         });
     }
 });
+
 
 let app = new Vue({
     el: '#app',
